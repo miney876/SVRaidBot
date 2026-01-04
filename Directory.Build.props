@@ -11,7 +11,7 @@
   </PropertyGroup>
   
   <!-- Set RuntimeIdentifier to win-x64 only for Windows-specific projects (WinForms) -->
-  <PropertyGroup Condition="$(MSBuildProjectName.Contains('WinForms'))">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'SysBot.Pokemon.WinForms'">
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
