@@ -148,6 +148,28 @@ This is helpful if your bot is in several servers and you need to let everyone k
 - RandomAnnouncementThumbnail - set to true if you want it to use random images from my custom thumbnails.  Does not work if you have a custom image you're using.
 - RandomAnnouncementColor - Let the bot choose from the list what color the embed will be this time.
 
+# __Building the Application__
+
+## Building on Windows
+To build the entire solution including the WinForms GUI:
+```cmd
+dotnet build SysBot.NET.sln
+```
+
+## Building on Linux/macOS
+To build just the console application on non-Windows platforms:
+```bash
+dotnet build SysBot.Pokemon.ConsoleApp/SysBot.Pokemon.ConsoleApp.csproj
+```
+
+## Running the Console Application
+After building, run the console app:
+```bash
+dotnet run --project SysBot.Pokemon.ConsoleApp/SysBot.Pokemon.ConsoleApp.csproj
+```
+
+On first run, it will create a `config.json` file that you need to configure with your bot settings.
+
 # __In-Game Set Up__
 - Stand in front of your raid crystal
 - In game Options, make sure of the following:
