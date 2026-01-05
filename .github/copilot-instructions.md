@@ -88,18 +88,31 @@ dotnet build SysBot.NET.sln -c Release -p:Platform=x64
 ```
 
 ### Running/Debugging
-Launch profiles in [Properties/launchSettings.json](SysBot.Pokemon.WinForms/Properties/launchSettings.json). Default configuration loads from `config.json` in working directory.
+Launch profiles in [Properties/launchSettings.json](SysBot.Pokemon.WinForms/Properties/launchSettings.json). Default configuration loads from `config.json` in the working directory (`Application.StartupPath`).
+
+**Configuration Management**:
+- Config path: `Program.ConfigPath` (defaults to `config.json` in exe directory)
+- Automatic backup system creates `config.backup_*` files on corruption
+- Serialization uses `System.Text.Json` with `ProgramConfigContext` for AOT compatibility
 
 To debug raid bot specifically:
 1. Set breakpoint in `RotatingRaidBotSV.MainLoop` or `InnerLoop`
-2. Attach to WinForms process or launch via F5
-3. Monitor logs in `LogUtil.LogInfo()` output
+2. Launch via F5 or attach to running WinForms process
+3. Monitor logs via `LogUtil.LogInfo()` and `LogUtil.LogError()` output
+4. Check `HasErrored` flag and `PerformRebootAndReset()` for recovery states
 
 ### Testing
 Unit tests in [SysBot.Tests](SysBot.Tests/) using xUnit. Run via:
 ```powershell
 dotnet test SysBot.Tests/SysBot.Tests.csproj
 ```
+
+Test coverage includes:
+- Command parsing (`CommandTests.cs`)
+- PKM generation (`GenerateTests.cs`)
+- Hub configuration (`PokeHubTests.cs`)
+- Queue management (`QueueTests.cs`)
+- String utilities (`StringTests.cs`)
 
 ### Dependency Versions
 - **Framework**: .NET 9.0
@@ -188,10 +201,18 @@ Commands sent via `Connection.SendAsync()`. Common patterns:
 Increment `_seedMismatchCount` triggers re-injection. Check `OverrideSeedIndex()` method and verify memory pointer calculations in `RaidMemoryManager`.
 
 ### Teleportation Failures
-Retry logic in `TeleportToInjectedDenLocation()` uses distance threshold validation. Ensure den locations JSON files have correct coordinates.
+Retry logic in `TeleportToInjectedDenLocation()` uses distance threshold validation. Ensure den locations JSON files have correct coordinates. Tracked via `_consecutiveDenFailures` with automatic map refresh after `DenFailuresBeforeMapRefresh` threshold.
 
 ### Discord Disconnects
 Discord token in `DiscordSettings`. Connection managed by `SysCord<T>` startup. Check token permissions (Read Messages, Send Messages, Manage Reactions).
 
 ### Web UI Not Accessible
 Requires admin rights or firewall rule. See README.md network setup instructions. Server starts in [Main.cs](SysBot.Pokemon.WinForms/Main.cs) `InitializeAsync()`.
+
+**Firewall Setup**:
+```cmd
+netsh advfirewall firewall add rule name="SVRaidBot Web" dir=in action=allow protocol=TCP localport=9090
+```
+
+### Config Corruption Recovery
+Program automatically attempts to restore from most recent `config.backup_*` file. Manual recovery: find latest backup in exe directory and rename to `config.json`.
