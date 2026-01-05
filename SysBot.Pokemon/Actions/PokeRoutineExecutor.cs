@@ -8,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace SysBot.Pokemon
 {
-    public abstract class PokeRoutineExecutor<T> : PokeRoutineExecutorBase where T : PKM, new()
+    public abstract class 
+    
+    
+    
+    PokeRoutineExecutor<T> : PokeRoutineExecutorBase where T : PKM, new()
     {
         protected PokeRoutineExecutor(IConsoleBotManaged<IConsoleConnection, IConsoleConnectionAsync> cfg) : base(cfg)
         {
